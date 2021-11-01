@@ -17,11 +17,13 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  
   runGraph();
 }
 
 void runGraph(){
+  /*lights are coded in parallel - this treats the code as the same in terms of receptors,
+   * meaning we only have to code one of the strips to get the same amount of code in both of them
+  */
   for(int i = 0; i < 6; i++){
     strip.fill(blue, 0, i);
     strip.show();
