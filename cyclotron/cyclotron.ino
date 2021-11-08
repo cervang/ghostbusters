@@ -30,7 +30,7 @@ void setup() {
 #endif
   strip.begin();
   strip_graph_1.begin();
-  strip_graph_2.begin();
+  //strip_graph_2.begin();
 }
 
 
@@ -128,15 +128,15 @@ void flashDig(){
 void runGraph(){
   for(int i = 0; i < 6; i++){
     strip_graph_1.fill(blue, 0, i);
-    strip_graph_2.fill(blue, 0, i);
+    //strip_graph_2.fill(blue, 0, i);
     strip_graph_1.show();
-    strip_graph_2.show();
+    //strip_graph_2.show();
     delay(500);
     strip_graph_1.clear();
-    strip_graph_2.clear();
+    //strip_graph_2.clear();
   }
   strip_graph_1.clear();
-  strip_graph_2.clear();
+  //strip_graph_2.clear();
 }
 
 void flashDark(){
