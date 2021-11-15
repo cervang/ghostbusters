@@ -18,11 +18,18 @@ uint32_t dark = graph.Color(0,0,0);
 uint32_t green = graph.Color(0,255,0);
 
 int waitDown = 100;
+int cyclo_init_delay = 500;
 int runUp = 125;
-int set_up = true;
+int set_up = false;
+int start = 0;
+int graph_pixel_curr = 1;
 
-unsigned long startTime = millis();
+unsigned long eventTime_1 = 152; //the graph wait time 125
+unsigned long eventTime_2 = 200; //the cyclo wait time 200
+
 unsigned long currTime = millis();
+unsigned long prevTime_1 = millis();
+unsigned long prevTime_2 = millis();
 
 void setup() {
   // put your setup code here, to run once:
@@ -33,24 +40,49 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+  currTime = millis();
+
+  //so, every 125 for the bar graph, a light will be lit
+  //then the graph will reset
   
-  startTime = millis();
-  if(startTime - currTime > waitDown){
+  if(currTime - prevTime_1 > eventTime_1){
     if(set_up){
-      start_graph();
+        //run the 
     }else{
-      run_up();
+      //run steady state => run_up();
+      graph.fill(blue, 0, graph_pixel_curr);
+      graph.show();
+      if(graph_pixel_curr >= GRAPH_PIXEL){
+        graph_pixel_curr = 1;
+      }else{
+        graph_pixel_curr++;
+      }
     }
+    prevTime_1 = currTime;
   }
+  graph.clear();
   
-  run_cyclo();
+  //at the same time, every cyclo will be fun in a for loop
+  if(currTime - prevTime_2 > eventTime_2){
+    start = fade_tube(start, 1);
+  }
+  cyclo.clear();
+  
 }
 
-void run_cyclo(){
-  cyclo.fill(green, 0, CYCLO_PIXEL);
-  cyclo.show();
-  delay(waitDown);
-  flashDark();
+
+
+/* Fading the individual light tubes */
+int fade_tube(int START, int FADE_DELAY){
+  if(START >= 16){
+    START = 0;
+  }
+  for(int i = 0; i <= 255; i++){
+    cyclo.fill(cyclo.Color(255-i,0,0), START, 4);  
+    cyclo.show();
+    delay(FADE_DELAY);
+  }  
+  return START + 4;
 }
 
 void runDown(int currPix){
