@@ -128,6 +128,7 @@ FADE_DELAY : Delay of the gradient- used in forloop
 int fade_tube(int START, int FADE_DELAY){
 
   //if START is greater than the pixel count, reset it to 0
+  //For Rene, change 16 to 20
   if(START >= 16){
     START = 0;
   }
@@ -135,13 +136,15 @@ int fade_tube(int START, int FADE_DELAY){
   //this for loop creates a fade effect
   for(int i = 0; i <= 255; i++){
     //cyclo.Color(255-i,0,0) -> Allows you to control the color brightness with forloop
-    //cyclo.fill(color, starting index, number of LEDs to fill from starting index);      
+    //cyclo.fill(color, starting index, number of LEDs to fill from starting index); 
+    //for Rene, change 4 to 5     
     cyclo.fill(cyclo.Color(255-i,0,0), START, 4);  
     cyclo.show();
     //fade_delay is set to 1 when active, 4 when in startup
     delay(FADE_DELAY);
   }  
   //increments the starting index
+  //for Rene, change 4 to 5
   return START + 4;
 }
 
