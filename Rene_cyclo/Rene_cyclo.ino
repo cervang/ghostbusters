@@ -176,7 +176,6 @@ FADE_DELAY : Delay of the gradient- used in for loop
 int fade_tube(int START, int FADE_DELAY){
 
   //if START is greater than the pixel count, reset it to 0
-  //For Rene, change 16 to 20
   if(START >= CYCLO_PIXEL){
     START = 0;
   }
@@ -184,15 +183,13 @@ int fade_tube(int START, int FADE_DELAY){
   //this for loop creates a fade effect
   for(int i = 0; i <= bright; i++){
     //cyclo.Color(255-i,0,0) -> Allows you to control the color brightness with forloop
-    //cyclo.fill(color, starting index, number of LEDs to fill from starting index); 
-    //for Rene, change 4 to 5     
+    //cyclo.fill(color, starting index, number of LEDs to fill from starting index);     
     cyclo.fill(cyclo.Color(bright-i,0,0), START, CYCLO_TUBE);  
     cyclo.show();
     //fade_delay is set to 1 when active, 4 when in startup
     delay(FADE_DELAY);
   }  
   //increments the starting index
-  //for Rene, change 4 to 5
   return START + CYCLO_TUBE;
 }
 
@@ -206,14 +203,14 @@ void start_up(int wait_time){
   cyclo.clear();
   graph.clear();
   for(int k = 0; k < bright; k++){
-    cyclo.fill(graph.Color(bright-k,0,0),0,16);
-    graph.fill(graph.Color(bright-k,0,0),0,6);
+    cyclo.fill(graph.Color(bright-k,0,0),0,CYCLO_PIXEL);
+    graph.fill(graph.Color(bright-k,0,0),0,GRAPH_PIXEL);
     cyclo.show();
     graph.show();
     delay(wait_time);
   }
-  cyclo.fill(dark,0,16);
-  graph.fill(dark,0,6);
+  cyclo.fill(dark,0,CYCLO_PIXEL);
+  graph.fill(dark,0,GRAPH_PIXEL);
   cyclo.show();
   graph.show();
 }
