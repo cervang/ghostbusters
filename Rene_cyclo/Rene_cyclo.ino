@@ -7,7 +7,7 @@
 #define PIN_GRAPH 4
 #define PIN_CYCLO 6 
 #define GRAPH_PIXEL 6
-#define CYCLO_PIXEL 16
+#define CYCLO_PIXEL 20
 #define BUTTON_PIN 2
 
 //for the first set of NEO
@@ -129,7 +129,7 @@ int fade_tube(int START, int FADE_DELAY){
 
   //if START is greater than the pixel count, reset it to 0
   //For Rene, change 16 to 20
-  if(START >= 16){
+  if(START >= CYCLO_PIXEL){
     START = 0;
   }
   
@@ -138,14 +138,14 @@ int fade_tube(int START, int FADE_DELAY){
     //cyclo.Color(255-i,0,0) -> Allows you to control the color brightness with forloop
     //cyclo.fill(color, starting index, number of LEDs to fill from starting index); 
     //for Rene, change 4 to 5     
-    cyclo.fill(cyclo.Color(255-i,0,0), START, 4);  
+    cyclo.fill(cyclo.Color(255-i,0,0), START, 5);  
     cyclo.show();
     //fade_delay is set to 1 when active, 4 when in startup
     delay(FADE_DELAY);
   }  
   //increments the starting index
   //for Rene, change 4 to 5
-  return START + 4;
+  return START + 5;
 }
 
 
