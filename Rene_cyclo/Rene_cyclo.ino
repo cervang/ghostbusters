@@ -81,7 +81,7 @@ void loop() {
           //fill the graph from the bottom with color
           graph.fill(blue, 0, graph_pixel_curr);
           graph.show();
-          //wake_up_cyclo(graph_pixel_curr);
+          wake_up_cyclo(graph_pixel_curr);
           //increment the curr pixal
           graph_pixel_curr++;
           //reset rundown pixel
@@ -158,15 +158,18 @@ void loop() {
 
 void wake_up_cyclo(int curr_pixel){
   //theoretically, this would be cool
+  //okay yeah it's cool lmao
     for(int i = 0; i <= int( bright / ((GRAPH_PIXEL+1) - curr_pixel)); i++){
     //cyclo.Color(255-i,0,0) -> Allows you to control the color brightness with forloop
     //cyclo.fill(color, starting index, number of LEDs to fill from starting index); 
     //for Rene, change 4 to 5     
-    cyclo.fill(cyclo.Color(i,0,0), 0, CYCLO_TUBE);  
+    cyclo.fill(cyclo.Color(i,0,0), 0, CYCLO_PIXEL);  
     cyclo.show();
     //fade_delay is set to 1 when active, 4 when in startup
-    delay(fade_delay);
+    delay(fade_delay+1);
   } 
+  cyclo.fill(dark, 0, CYCLO_PIXEL);  
+  cyclo.show();
 }
 
 /* Fading the individual light tubes 
