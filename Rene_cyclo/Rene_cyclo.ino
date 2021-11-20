@@ -81,6 +81,7 @@ void loop() {
           //fill the graph from the bottom with color
           graph.fill(blue, 0, graph_pixel_curr);
           graph.show();
+          //make the cyclo light up a bit
           wake_up_cyclo(graph_pixel_curr);
           //increment the curr pixal
           graph_pixel_curr++;
@@ -166,7 +167,7 @@ void wake_up_cyclo(int curr_pixel){
     cyclo.fill(cyclo.Color(i,0,0), 0, CYCLO_PIXEL);  
     cyclo.show();
     //fade_delay is set to 1 when active, 4 when in startup
-    delay(fade_delay+1);
+    delay(fade_delay+4);
   } 
   cyclo.fill(dark, 0, CYCLO_PIXEL);  
   cyclo.show();
