@@ -5,60 +5,74 @@
 #endif
 
 #define bright 50
-#define PIN_BUTTON 29
+#define GRAPH_COUNT 20
 #define GUN_PIN 33
-#define TEST_1 31 //green
-#define modePin 41
-#define TEST_2 37 //orange
+#define FIRST_SWITCH_PIN 27
+#define SECOND_SWITCH_PIN 28
+#define THIRD_SWITCH_PIN 29 
+#define OUTPUT_modePin 41
+#define STATE_CHANGE_PIN 37 //orange
 
 
 //default button state
-int buttonState = 0;
-int test1 = 0;
-int orange = 0;
-//tesing button
-int prev_button = 0;
-int val = 0;
+int FIRST_SWITCH = 0;
+int SECOND_SWITCH = 0;
+int THIRD_SWITCH = 0;
+int CUR_GUN_STATE = 0;
+int STATE_CHANGE = 0;
 
-Adafruit_NeoPixel graph(20, 6, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel graph(GRAPH_COUNT, 6, NEO_GRB + NEO_KHZ800);
 
+
+uint32_t red = graph.Color(bright,0,0);
 uint32_t green = graph.Color(0,bright,0);
+uint32_t blue = graph.Color(0,0,bright);
+uint32_t orange = graph.Color(255,165,0);
 uint32_t dark = graph.Color(0,0,0);
+//default color would be red
+uint32_t currColor = red;
+
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
   graph.begin();
   digitalWrite(GUN_PIN, 0);
-  pinMode(PIN_BUTTON, INPUT_PULLUP);
-  pinMode(TEST_1, INPUT_PULLUP);
-  pinMode(TEST_2, INPUT_PULLUP);
+  pinMode(FIRST_SWITCH_PIN, INPUT_PULLUP);
+  pinMode(SECOND_SWITCH_PIN, INPUT_PULLUP);
+  pinMode(THIRD_SWITCH_PIN, INPUT_PULLUP);
+  pinMode(STATE_CHANGE_PIN, INPUT_PULLUP);
   
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+
+  //state of the first switch check
+  FIRST_SWITCH = digitalRead(FIRST_SWITCH_PIN);
+  //state of the second switch
+  SECOND_SWITCH = digitalRead(SECOND_SWITCH_PIN); 
+  //state of the third switch
+  THIRD_SWITCH = digitalRead(THIRD_SWITCH_PIN);
+  //state of the gun button
+  STATE_CHANGE = digitalRead(STATE_CHANGE_PIN);
   
-  buttonState = digitalRead(PIN_BUTTON);
-  test1 = digitalRead(TEST_1);
-  orange = digitalRead(TEST_2);
   Serial.print("\n_____________________________\n ");
-  Serial.print("\nButtonState: ");
-  Serial.print(buttonState);
+  Serial.print("\nTHIRD_SWITCH: ");
+  Serial.print(THIRD_SWITCH);
   Serial.print("\n");
   
-  Serial.print("\nGreen: ");
-  Serial.print(test1);
+  Serial.print("\nSTATE_CHANGE: ");
+  Serial.print(STATE_CHANGE);
   Serial.print("\n");
   
-  Serial.print("\nOrange: ");
-  Serial.print(orange);
-  Serial.print("\n");
-  
-  /**/
-  if(buttonState == HIGH){
+  /**
+   * Turning on the lights
+   * TODO: Adding the other three buttons with this in the logic
+   * All three switches must be high for the wand to work, so the pack should reflect that
+  */
+  if( (THIRD_SWITCH == HIGH) && (SECOND_SWITCH == LOW) && (FIRST_SWITCH == LOW)){
     //the button is in the on state
-    //this will be the start up sequence here 
+    //run start up start up sequence here 
     graph.fill(green, 0, 20);
     graph.show();
   }else{
@@ -67,20 +81,65 @@ void loop() {
     graph.fill(dark, 0, 20);
     graph.show();
   }
-  if(orange == LOW){
-    //send a charge to the pin
+
+  /**
+   * STATE_CHANGE shows the modes of the gun. 
+   * TODO: Make a function to return the state of the gun
+  */
+  if(STATE_CHANGE == LOW){
     //this switches the modes of the gun
     //if the button is low (meaning it's pressed)
-    Serial.print("\t\tOrange is LOW ");
+    Serial.print("\t\nSTATE_CHANGE is LOW ");
     //send signal to the board showing that change
-    digitalWrite(modePin, HIGH);
-    //wait for a second for it to acknowledge it
+    digitalWrite(OUTPUT_modePin, HIGH);
+    //wait for a second for hasbro to acknowledge it
     delay(100); 
     //turn off the signal
-    digitalWrite(modePin, LOW); 
- 
+    digitalWrite(OUTPUT_modePin, LOW); 
+    //get color for the neopixals
+    gun_state();
+    //currColor would be changed now, so update the strips
+    //TODO: Add the start up sequence 
+    //For now, just update the strip
+    graph.fill(currColor, 0, GRAPH_COUNT);
   }
       
+}
 
-  //delay(1500);
+/**
+ *Returns an color to change the NEOPIXEL lights
+*/
+void gun_state(){
+  uint32_t GunColor;
+  if(CUR_GUN_STATE > 3){
+    //reset to 0
+    CUR_GUN_STATE = 0;
+  }
+  switch (CUR_GUN_STATE) {
+    case 0:
+      // Orange would be the default
+      //this would be the default state
+      currColor = red;
+      break;
+    case 1:
+      // slime
+      // return green
+      currColor = green;
+      break;
+    case 2:
+      // ice
+      // return blue
+      currColor = blue;
+      break;
+    case 3:
+      // firing
+      currColor = orange;
+      break;
+    default:
+      //default would be red
+      currColor = red;
+      break;
+  }
+  //increment
+  CUR_GUN_STATE++;
 }
