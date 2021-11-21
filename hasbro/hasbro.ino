@@ -13,7 +13,7 @@
 #define OUTPUT_SECOND_SWITCH 24
 #define THIRD_SWITCH_PIN 29 
 //because of rewiring, we don't need this for now 
-#define OUTPUT_THIRD_SWITCH 25
+//#define OUTPUT_THIRD_SWITCH 25
 #define OUTPUT_modePin 41
 #define STATE_CHANGE_PIN 37 //orange
 
@@ -98,6 +98,7 @@ void loop() {
    * TODO: Rewire the switch back to original
    * This would be the logic when it is done
   */
+ /*
   if(THIRD_SWITCH == LOW){
     //third switch is active
     //send a message via the arduino to help with activate it
@@ -107,6 +108,7 @@ void loop() {
     //send message via arduino to turn it off
     digitalWrite(OUTPUT_THIRD_SWITCH), LOW); 
   }
+*/
   
   /**
    * Turning on the lights
