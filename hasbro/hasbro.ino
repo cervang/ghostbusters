@@ -8,8 +8,12 @@
 #define GRAPH_COUNT 20
 #define GUN_PIN 33
 #define FIRST_SWITCH_PIN 27
+#define OUTPUT_FIRST_SWITCH 23
 #define SECOND_SWITCH_PIN 28
+#define OUTPUT_SECOND_SWITCH 24
 #define THIRD_SWITCH_PIN 29 
+//because of rewiring, we don't need this for now 
+//#define OUTPUT_THIRD_SWITCH 25
 #define OUTPUT_modePin 41
 #define STATE_CHANGE_PIN 37 //orange
 
@@ -64,6 +68,34 @@ void loop() {
   Serial.print("\nSTATE_CHANGE: ");
   Serial.print(STATE_CHANGE);
   Serial.print("\n");
+  
+  /**
+   * TODO: Add logic for first switch 
+   */
+  if(FIRST_SWITCH == LOW){
+    //if the switch is conencted, we need to ackknoledge it
+    //if it is low, that means it is active
+    //send a message via the arduino to help with activate it
+    digitalWrite(OUTPUT_FIRST_SWITCH), HIGH); 
+  }else{
+    //if FIRST_SWITCH == HIGH, this means it needs to be off
+    //send message via arduino to turn it off
+    digitalWrite(OUTPUT_FIRST_SWITCH), LOW);
+  }
+  /**
+   * TODO: Add logic for second switch 
+   */
+  if(SECOND_SWITCH == LOW){
+    //second switch is active
+    //send a message via the arduino to help with activate it
+    digitalWrite(OUTPUT_SECOND_SWITCH), HIGH); 
+  }else{
+    //second switch is off
+    //send message via arduino to turn it off
+    digitalWrite(OUTPUT_SECOND_SWITCH), LOW); 
+  }
+
+
   
   /**
    * Turning on the lights
