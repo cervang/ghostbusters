@@ -28,7 +28,7 @@
 
 unsigned long currTime = millis();
 unsigned long prevTime = millis();
-unsigned long eventTime = 40;
+unsigned long eventTime = 50;
 
 
 
@@ -38,6 +38,7 @@ unsigned long eventTime = 40;
 int THIRD_SWITCH = 0;
 int CUR_GUN_STATE = 0;
 int STATE_CHANGE = 0;
+int STATE_CHANGE_STATE = 0;
 
 Adafruit_NeoPixel graph(GRAPH_COUNT, 6, NEO_GRB + NEO_KHZ800);
 
@@ -71,6 +72,9 @@ void loop() {
   THIRD_SWITCH = digitalRead(THIRD_SWITCH_PIN);
   //state of the gun button
   STATE_CHANGE = digitalRead(STATE_CHANGE_PIN);
+  STATE_CHANGE_STATE = digitalRead(OUTPUT_modePin);
+  
+  
   
   Serial.print("\n_____________________________\n ");
   Serial.print("\nTHIRD_SWITCH: ");
@@ -80,6 +84,17 @@ void loop() {
   Serial.print("\nSTATE_CHANGE: ");
   Serial.print(STATE_CHANGE);
   Serial.print("\n");
+
+  if(STATE_CHANGE_STATE == HIGH && THIRD_SWITCH == LOW){
+    currTime = millis();
+    if(currTime - prevTime > eventTime){
+      //need time for the gun to acknledge the change, this will be the way
+      //turn off the signal
+      Serial.print("\n\n________________\n\t\t\t\tHAPPENING NOW");
+      digitalWrite(OUTPUT_modePin, LOW); 
+      prevTime = currTime;
+    }
+  }
  
   /**
    * TODO: Rewire the switch back to original
@@ -103,12 +118,7 @@ void loop() {
     digitalWrite(ON_PIN, LOW);
   }
   
-  if(currTime - prevTime > eventTime){
-    //need time for the gun to acknledge the change, this will be the way
-    //turn off the signal
-    digitalWrite(OUTPUT_modePin, LOW); 
-    prevTime = currTime;
-  }
+
   
   /**
    * STATE_CHANGE shows the modes of the gun. 
@@ -122,7 +132,7 @@ void loop() {
     digitalWrite(OUTPUT_modePin, HIGH);
     //wait for a second for hasbro to acknowledge it
     //take currentTime to compare for later
-    currTime == millis();
+    prevTime == millis();
   }
       
 }
