@@ -6,8 +6,9 @@
 
 #define PIN_GRAPH 4
 #define PIN_CYCLO 6 
-#define PIN_BUTTON 2
-#define PIN_BUTTON_2 1
+#define BLUE_THIRD_PIN_SWITCH 2
+#define THIRD_SWITCH_PIN 3
+#define OUTPUT_THIRD_SWITCH 5
 //total LEDs in graph
 #define GRAPH_PIXEL 6
 //total LEDs in cyclo
@@ -58,21 +59,24 @@ void setup() {
   Serial.begin(9600);
   graph.begin();
   cyclo.begin();
-  pinMode(PIN_BUTTON, INPUT_PULLUP);
-  pinMode(PIN_BUTTON_2, INPUT_PULLUP);
+  pinMode(THIRD_SWITCH_PIN, INPUT_PULLUP);
+
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   
-  buttonState = digitalRead(PIN_BUTTON);
-  buttonState = digitalRead(PIN_BUTTON_2);
+  buttonState = digitalRead(THIRD_SWITCH_PIN);
   Serial.print("\nButtonState: ");
   Serial.print(buttonState);
-  Serial.print("\n\tbuttonState2: ");
-  Serial.print(buttonState2);
+  
   //if button is on
   if(buttonState == LOW){
+    //tell the board to make the gun go burr
+    Serial.print("\n\t\tButtonStat LOW\n");
+    Serial.print("\n\t\tButton On\n");
+    digitalWrite(OUTPUT_THIRD_SWITCH, HIGH);
+    digitalWrite(BLUE_THIRD_PIN_SWITCH, HIGH);
     
     currTime = millis();
     
@@ -103,10 +107,10 @@ void loop() {
             //make sure it doesn't run the setup again
             set_up = false;
             //I added this function because it looks cool
-            start_up(3);
-            start_up(2);
-            start_up(1);
-            start_up(1);
+            //start_up(3);
+            //start_up(2);
+            //start_up(1);
+            //start_up(1);
           }
         }else{
           //set the pixel to blue
@@ -152,6 +156,10 @@ void loop() {
     //if button is off
     if(buttonState == HIGH){
       //Clear is not working- turn all the pixels to dark
+      Serial.print("\n\t\tButtonStat HIGH\n");
+      Serial.print("\n\t\tButton Off\n");
+      digitalWrite(OUTPUT_THIRD_SWITCH, LOW);
+      digitalWrite(BLUE_THIRD_PIN_SWITCH, LOW);
       cyclo.fill(dark, 0, CYCLO_PIXEL);
       graph.fill(dark, 0, GRAPH_PIXEL);
       //show all pixels as dark
