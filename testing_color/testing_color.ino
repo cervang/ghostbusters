@@ -8,7 +8,11 @@
 #define GRAPH_COUNT 20
 #define GRAPH_PIN 4
 
+#define GUN_PIN 2
+//#define 
+
 int CUR_GUN_STATE = 0; 
+int GUN_ON = 0;
 
 
 Adafruit_NeoPixel graph(GRAPH_COUNT, GRAPH_PIN, NEO_GRB + NEO_KHZ800);
@@ -19,17 +23,39 @@ uint32_t green = graph.Color(0,bright,0);
 uint32_t blue = graph.Color(0,0,bright);
 uint32_t orange = graph.Color(255,165,0);
 uint32_t dark = graph.Color(0,0,0);
+
 //default color would be red
 uint32_t currColor = red;
 
 void setup() {
   // put your setup code here, to run once:
+  Serial.begin(9600);
   graph.begin();
+  //pinMode(GUN_PIN, INPUT_PULLUP);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
 
+  //read the pins to see if the switch has been switched
+  GUN_ON = digitalRead(GUN_PIN);
+  Serial.print("\n_____________________________\n ");
+  Serial.print(GUN_ON);
+
+
+  if(GUN_ON == HIGH){
+    
+    Serial.print("\n\t\tTHIRD_SWITCH ON");
+    //gun is on, turn on the lights
+    graph.fill(currColor, 0, GRAPH_COUNT);
+    graph.show();
+  }else{
+    //GUN_ON == LOW
+    //gun is not on
+    Serial.print("\n\t\tTHIRD_SWITCH OFF HIGH");
+    graph.fill(dark, 0, GRAPH_COUNT);
+    graph.show(); 
+  }
+  delay(1000);
 }
 
 /**
