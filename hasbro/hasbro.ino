@@ -7,15 +7,27 @@
 #define bright 50
 #define GRAPH_COUNT 20
 #define GUN_PIN 33
-#define FIRST_SWITCH_PIN 27
-#define OUTPUT_FIRST_SWITCH 23
-#define SECOND_SWITCH_PIN 28
-#define OUTPUT_SECOND_SWITCH 24
-#define THIRD_SWITCH_PIN 29 
-//because of rewiring, we don't need this for now 
-//#define OUTPUT_THIRD_SWITCH 25
-#define OUTPUT_modePin 41
-#define STATE_CHANGE_PIN 37 //orange
+//TODO: Implement later if we want this.
+//For now, allow it to control the pack with just the third
+//#define FIRST_SWITCH_PIN 27
+//#define SECOND_SWITCH_PIN 28
+
+//#define OUTPUT_SECOND_SWITCH 24
+#define THIRD_SWITCH_PIN 2 
+//pins we write to turn on the gun 
+#define OUTPUT_THIRD_SWITCH 3
+#define OUTPUT_THIRD_SWITCH_PIN_2 4
+
+//controls the state of the gun, allowing us to moniter change
+#define STATE_CHANGE_PIN 5
+#define OUTPUT_modePin 6
+
+//tells the second arduino to turn off the gun
+#define ON_PIN 12
+#define OFF_PIN 11
+
+
+
 
 
 //default button state
@@ -42,8 +54,8 @@ void setup() {
   Serial.begin(9600);
   graph.begin();
   digitalWrite(GUN_PIN, 0);
-  pinMode(FIRST_SWITCH_PIN, INPUT_PULLUP);
-  pinMode(SECOND_SWITCH_PIN, INPUT_PULLUP);
+  //pinMode(FIRST_SWITCH_PIN, INPUT_PULLUP);
+  //pinMode(SECOND_SWITCH_PIN, INPUT_PULLUP);
   pinMode(THIRD_SWITCH_PIN, INPUT_PULLUP);
   pinMode(STATE_CHANGE_PIN, INPUT_PULLUP);
   
@@ -52,9 +64,9 @@ void setup() {
 void loop() {
 
   //state of the first switch check
-  FIRST_SWITCH = digitalRead(FIRST_SWITCH_PIN);
+  //FIRST_SWITCH = digitalRead(FIRST_SWITCH_PIN);
   //state of the second switch
-  SECOND_SWITCH = digitalRead(SECOND_SWITCH_PIN); 
+  //SECOND_SWITCH = digitalRead(SECOND_SWITCH_PIN); 
   //state of the third switch
   THIRD_SWITCH = digitalRead(THIRD_SWITCH_PIN);
   //state of the gun button
@@ -72,6 +84,7 @@ void loop() {
   /**
    * TODO: Add logic for first switch 
    */
+  /*
   if(FIRST_SWITCH == LOW){
     //if the switch is conencted, we need to ackknoledge it
     //if it is low, that means it is active
@@ -82,9 +95,11 @@ void loop() {
     //send message via arduino to turn it off
     digitalWrite(OUTPUT_FIRST_SWITCH), LOW);
   }
+  */
   /**
    * TODO: Add logic for second switch 
    */
+  /*
   if(SECOND_SWITCH == LOW){
     //second switch is active
     //send a message via the arduino to help with activate it
@@ -94,44 +109,50 @@ void loop() {
     //send message via arduino to turn it off
     digitalWrite(OUTPUT_SECOND_SWITCH), LOW); 
   }
+  */
   /**
    * TODO: Rewire the switch back to original
    * This would be the logic when it is done
-  */
- /*
+  */ 
   if(THIRD_SWITCH == LOW){
     //third switch is active
-    //send a message via the arduino to help with activate it
+    //send message to the gun to turn it on
     digitalWrite(OUTPUT_THIRD_SWITCH), HIGH); 
+    digitalWrite(OUTPUT_THIRD_SWITCH_PIN_2, HIGH);
   }else{
     //third switch is off
     //send message via arduino to turn it off
-    digitalWrite(OUTPUT_THIRD_SWITCH), LOW); 
+    digitalWrite(OUTPUT_THIRD_SWITCH), LOW);
+    digitalWrite(OUTPUT_THIRD_SWITCH_2), LOW); 
   }
-*/
+
   
   /**
    * Turning on the lights
    * TODO: Adding the other three buttons with this in the logic
    * All three switches must be high for the wand to work, so the pack should reflect that
   */
-  if( (THIRD_SWITCH == HIGH) && (SECOND_SWITCH == LOW) && (FIRST_SWITCH == LOW)){
+  //if( THIRD_SWITCH == HIGH){
+  if( THIRD_SWITCH == HIGH){
     //the button is in the on state
     //run start up start up sequence here 
-    graph.fill(green, 0, 20);
+    graph.fill(currColor, 0, GRAPH_COUNT);
     graph.show();
   }else{
     //button is off
     //this would be the turning off / power down sequence 
-    graph.fill(dark, 0, 20);
+    graph.fill(dark, 0, GRAPH_COUNT);
     graph.show();
+    CUR_GUN_STATE = 0;
+    currColor = red;
+    
   }
 
   /**
    * STATE_CHANGE shows the modes of the gun. 
    * TODO: Make a function to return the state of the gun
   */
-  if(STATE_CHANGE == LOW){
+  if(STATE_CHANGE == LOW && THIRD_SWITCH == HIGH){
     //this switches the modes of the gun
     //if the button is low (meaning it's pressed)
     Serial.print("\t\nSTATE_CHANGE is LOW ");
@@ -146,7 +167,9 @@ void loop() {
     //currColor would be changed now, so update the strips
     //TODO: Add the start up sequence 
     //For now, just update the strip
+    
     graph.fill(currColor, 0, GRAPH_COUNT);
+    graph.show();
   }
       
 }
