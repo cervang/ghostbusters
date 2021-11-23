@@ -80,9 +80,7 @@ void loop() {
   Serial.print("\nSTATE_CHANGE: ");
   Serial.print(STATE_CHANGE);
   Serial.print("\n");
-  
-
-  */
+ 
   /**
    * TODO: Rewire the switch back to original
    * This would be the logic when it is done
