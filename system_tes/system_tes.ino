@@ -6,9 +6,9 @@
 
 #define PIN_GRAPH 4
 #define PIN_CYCLO 6 
-#define BLUE_THIRD_PIN_SWITCH 2
+//#define BLUE_THIRD_PIN_SWITCH 2
 #define THIRD_SWITCH_PIN 3
-#define OUTPUT_THIRD_SWITCH 5
+//#define OUTPUT_THIRD_SWITCH 5
 //total LEDs in graph
 #define GRAPH_PIXEL 6
 //total LEDs in cyclo
@@ -71,12 +71,10 @@ void loop() {
   Serial.print(buttonState);
   
   //if button is on
-  if(buttonState == LOW){
+  if(buttonState == HIGH){
     //tell the board to make the gun go burr
     Serial.print("\n\t\tButtonStat LOW\n");
     Serial.print("\n\t\tButton On\n");
-    digitalWrite(OUTPUT_THIRD_SWITCH, HIGH);
-    digitalWrite(BLUE_THIRD_PIN_SWITCH, HIGH);
     
     currTime = millis();
     
@@ -154,12 +152,12 @@ void loop() {
     }
 
     //if button is off
-    if(buttonState == HIGH){
+    if(buttonState == LOW){
       //Clear is not working- turn all the pixels to dark
       Serial.print("\n\t\tButtonStat HIGH\n");
       Serial.print("\n\t\tButton Off\n");
-      digitalWrite(OUTPUT_THIRD_SWITCH, LOW);
-      digitalWrite(BLUE_THIRD_PIN_SWITCH, LOW);
+      //digitalWrite(OUTPUT_THIRD_SWITCH, LOW);
+      //digitalWrite(BLUE_THIRD_PIN_SWITCH, LOW);
       cyclo.fill(dark, 0, CYCLO_PIXEL);
       graph.fill(dark, 0, GRAPH_PIXEL);
       //show all pixels as dark
