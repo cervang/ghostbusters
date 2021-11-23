@@ -81,34 +81,7 @@ void loop() {
   Serial.print(STATE_CHANGE);
   Serial.print("\n");
   
-  /**
-   * TODO: Add logic for first switch 
-   */
-  /*
-  if(FIRST_SWITCH == LOW){
-    //if the switch is conencted, we need to ackknoledge it
-    //if it is low, that means it is active
-    //send a message via the arduino to help with activate it
-    digitalWrite(OUTPUT_FIRST_SWITCH), HIGH); 
-  }else{
-    //if FIRST_SWITCH == HIGH, this means it needs to be off
-    //send message via arduino to turn it off
-    digitalWrite(OUTPUT_FIRST_SWITCH), LOW);
-  }
-  */
-  /**
-   * TODO: Add logic for second switch 
-   */
-  /*
-  if(SECOND_SWITCH == LOW){
-    //second switch is active
-    //send a message via the arduino to help with activate it
-    digitalWrite(OUTPUT_SECOND_SWITCH), HIGH); 
-  }else{
-    //second switch is off
-    //send message via arduino to turn it off
-    digitalWrite(OUTPUT_SECOND_SWITCH), LOW); 
-  }
+
   */
   /**
    * TODO: Rewire the switch back to original
@@ -140,28 +113,6 @@ void loop() {
   }
   
   /**
-   * Turning on the lights
-   * TODO: Adding the other three buttons with this in the logic
-   * All three switches must be high for the wand to work, so the pack should reflect that
-  */
-  /*
-  //if( THIRD_SWITCH == HIGH){
-  if( THIRD_SWITCH == LOW){
-    //the button is in the on state
-    //run start up start up sequence here 
-    graph.fill(currColor, 0, GRAPH_COUNT);
-    graph.show();
-  }else{
-    //button is off
-    //this would be the turning off / power down sequence 
-    graph.fill(dark, 0, GRAPH_COUNT);
-    graph.show();
-    CUR_GUN_STATE = 0;
-    currColor = red;
-    
-  }
-  */
-  /**
    * STATE_CHANGE shows the modes of the gun. 
    * TODO: Make a function to return the state of the gun
   */
@@ -172,21 +123,8 @@ void loop() {
     //send signal to the board showing that change
     digitalWrite(OUTPUT_modePin, HIGH);
     //wait for a second for hasbro to acknowledge it
+    //take currentTime to compare for later
     currTime == millis();
-    //delay(40); 
-    //turn off the signal
-    //digitalWrite(OUTPUT_modePin, LOW); 
-
-    //tell the second arduino
-    
-    
-    //get color for the neopixals
-    //gun_state();
-    //currColor would be changed now, so update the strips
-    //TODO: Add the start up sequence 
-    //For now, just update the strip 
-    //graph.fill(currColor, 0, GRAPH_COUNT);
-    //graph.show();
   }
       
 }
