@@ -27,12 +27,9 @@
 #define OFF_PIN 11
 
 
-
-
-
 //default button state
-int FIRST_SWITCH = 0;
-int SECOND_SWITCH = 0;
+//int FIRST_SWITCH = 0;
+//int SECOND_SWITCH = 0;
 int THIRD_SWITCH = 0;
 int CUR_GUN_STATE = 0;
 int STATE_CHANGE = 0;
@@ -117,13 +114,13 @@ void loop() {
   if(THIRD_SWITCH == LOW){
     //third switch is active
     //send message to the gun to turn it on
-    digitalWrite(OUTPUT_THIRD_SWITCH), HIGH); 
+    digitalWrite(OUTPUT_THIRD_SWITCH, HIGH); 
     digitalWrite(OUTPUT_THIRD_SWITCH_PIN_2, HIGH);
   }else{
     //third switch is off
     //send message via arduino to turn it off
-    digitalWrite(OUTPUT_THIRD_SWITCH), LOW);
-    digitalWrite(OUTPUT_THIRD_SWITCH_2), LOW); 
+    digitalWrite(OUTPUT_THIRD_SWITCH, LOW);
+    digitalWrite(OUTPUT_THIRD_SWITCH_PIN_2, LOW); 
   }
 
   
@@ -133,7 +130,7 @@ void loop() {
    * All three switches must be high for the wand to work, so the pack should reflect that
   */
   //if( THIRD_SWITCH == HIGH){
-  if( THIRD_SWITCH == HIGH){
+  if( THIRD_SWITCH == LOW){
     //the button is in the on state
     //run start up start up sequence here 
     graph.fill(currColor, 0, GRAPH_COUNT);
@@ -152,7 +149,7 @@ void loop() {
    * STATE_CHANGE shows the modes of the gun. 
    * TODO: Make a function to return the state of the gun
   */
-  if(STATE_CHANGE == LOW && THIRD_SWITCH == HIGH){
+  if(STATE_CHANGE == LOW && THIRD_SWITCH == LOW){
     //this switches the modes of the gun
     //if the button is low (meaning it's pressed)
     Serial.print("\t\nSTATE_CHANGE is LOW ");
