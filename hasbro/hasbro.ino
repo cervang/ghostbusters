@@ -24,9 +24,11 @@
 
 //tells the second arduino to turn off the gun
 #define ON_PIN 12
-#define OFF_PIN 11
+//#define OFF_PIN 11
 
-
+unsigned long currTime = millis();
+unsigned long prevTime = millis();
+unsigned long eventTime = 40;
 
 
 
@@ -54,8 +56,6 @@ void setup() {
   Serial.begin(9600);
   graph.begin();
   digitalWrite(GUN_PIN, 0);
-  //pinMode(FIRST_SWITCH_PIN, INPUT_PULLUP);
-  //pinMode(SECOND_SWITCH_PIN, INPUT_PULLUP);
   pinMode(THIRD_SWITCH_PIN, INPUT_PULLUP);
   pinMode(STATE_CHANGE_PIN, INPUT_PULLUP);
   
@@ -117,19 +117,27 @@ void loop() {
   if(THIRD_SWITCH == LOW){
     //third switch is active
     //send message to the gun to turn it on
+    Serial.print("\n\t\tTHIRD_SWITCH ON");
     digitalWrite(OUTPUT_THIRD_SWITCH, HIGH); 
     digitalWrite(OUTPUT_THIRD_SWITCH_PIN_2, HIGH);
     //send message to second arduino to turn on
     digitalWrite(ON_PIN, HIGH);
-  }else{
+  }else if(THIRD_SWITCH == HIGH){
     //third switch is off
     //send message via arduino to turn it off
+    Serial.print("\n\t\tTHIRD_SWITCH OFF HIGH");
     digitalWrite(OUTPUT_THIRD_SWITCH, LOW);
     digitalWrite(OUTPUT_THIRD_SWITCH_PIN_2, LOW); 
     //send message to second arduino to turn off
-    digitalWrite(ON_PIN, HIGH);
+    digitalWrite(ON_PIN, LOW);
   }
-
+  
+  if(currTime - prevTime > eventTime){
+    //need time for the gun to acknledge the change, this will be the way
+    //turn off the signal
+    digitalWrite(OUTPUT_modePin, LOW); 
+    prevTime = currTime;
+  }
   
   /**
    * Turning on the lights
@@ -160,13 +168,14 @@ void loop() {
   if(STATE_CHANGE == LOW && THIRD_SWITCH == LOW){
     //this switches the modes of the gun
     //if the button is low (meaning it's pressed)
-    Serial.print("\t\nSTATE_CHANGE is LOW ");
+    Serial.print("\t\n\t\tSTATE_CHANGE is LOW ");
     //send signal to the board showing that change
     digitalWrite(OUTPUT_modePin, HIGH);
     //wait for a second for hasbro to acknowledge it
-    delay(100); 
+    currTime == millis();
+    //delay(40); 
     //turn off the signal
-    digitalWrite(OUTPUT_modePin, LOW); 
+    //digitalWrite(OUTPUT_modePin, LOW); 
 
     //tell the second arduino
     
