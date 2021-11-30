@@ -4,6 +4,8 @@
   #include <avr/power.h>
 #endif
 
+//circuito.io for breadboard
+
 #define PIN_GRAPH 4
 #define PIN_CYCLO 6 
 //#define BLUE_THIRD_PIN_SWITCH 2
@@ -71,7 +73,7 @@ void loop() {
   Serial.print(buttonState);
   
   //if button is on
-  if(buttonState == HIGH){
+  if(buttonState == LOW){
     //tell the board to make the gun go burr
     Serial.print("\n\t\tButtonStat LOW\n");
     Serial.print("\n\t\tButton On\n");
@@ -152,7 +154,7 @@ void loop() {
     }
 
     //if button is off
-    if(buttonState == LOW){
+    if(buttonState == HIGH){
       //Clear is not working- turn all the pixels to dark
       Serial.print("\n\t\tButtonStat HIGH\n");
       Serial.print("\n\t\tButton Off\n");
