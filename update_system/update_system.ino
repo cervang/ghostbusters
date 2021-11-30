@@ -42,6 +42,7 @@ uint32_t GREEN = graph.Color(0,BRIGHT,0);
 uint32_t DARK = graph.Color(0,0,0);
 ////////////////////// ////////////////////// //////////////////////
 
+
 ////////////////////// Main Loop Values //////////////////////
 int thirdSwitchState = 0;
 int set_up = true;
