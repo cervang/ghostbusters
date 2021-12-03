@@ -3,7 +3,7 @@
 #ifdef __AVR__
   #include <avr/power.h>
 #endif
-
+ 
 ////////////////////// Neo Pixel and Related Vairables ////////////////////// 
 //pin associated with graph
 #define PIN_GRAPH 4
@@ -32,12 +32,12 @@ Adafruit_NeoPixel cyclo(CYCLO_PIXEL, PIN_CYCLO, NEO_GRB + NEO_KHZ800);
 //bright is for not burning my eyes during testing
 //used to control the brightness of LEDs
 // 0 <= BRIGHT <= 255
-#define BRIGHT 255;
+#define BRIGHT 255
 //colors used in the program and for testing
 uint32_t BLUE = graph.Color(0,0,BRIGHT);
 uint32_t RED = graph.Color(BRIGHT,0,0);
 //make it a percentage to correlate with variable BRIGHT
-uint32_t ORANGE = graph.color(BRIGHT*(255/255), BRIGHT*(165/255), 0);
+uint32_t ORANGE = graph.Color(BRIGHT*(255/255), BRIGHT*(165/255), 0);
 uint32_t GREEN = graph.Color(0,BRIGHT,0);
 uint32_t DARK = graph.Color(0,0,0);
 ////////////////////// ////////////////////// //////////////////////
@@ -45,11 +45,13 @@ uint32_t DARK = graph.Color(0,0,0);
 
 ////////////////////// Main Loop Values //////////////////////
 int thirdSwitchState = 0;
-int set_up = true;
+int start_up = true;
 int warm_up = false;
 int START = 0;
+int run_down_index = 0;
+int graph_pixel_curr = 1;
 ////////////////////// ////////////////////// //////////////////////  
-
+//it takes three seconds to start up the gun and fire
 
 void setup() {
   // put your setup code here, to run once:
@@ -61,27 +63,27 @@ void setup() {
 }
 
 
-void loop{
+void loop() {
     //redesigning the system so start up sequence is more fluid
     thirdSwitchState = digitalRead(THIRD_SWITCH_PIN);
     Serial.print("\nThirdSwitch: ");
     Serial.print(thirdSwitchState);
 
-    if(buttonState == LOW){
+    if(thirdSwitchState == LOW){
         Serial.print("\n\t\tThirdSwitch is LOW\n");
         Serial.print("\n\t\tPack is ON\n");
         //this means the button is active - let the sequence run
 
         
-        if(set_up){
+        if(start_up){
             //run the set up sequence
             if(graph_pixel_curr <= (GRAPH_PIXEL-run_down_index) ){  
                 //the pixel is still running down the graph
                 //set the pixel to blue
-                graph.setPixelColor(GRAPH_PIXEL-run_down_index, blue);
+                graph.setPixelColor(GRAPH_PIXEL-run_down_index, BLUE);
                 graph.show();
                 //program the restep to be dark
-                graph.setPixelColor(GRAPH_PIXEL-run_down_index, dark);
+                graph.setPixelColor(GRAPH_PIXEL-run_down_index, DARK);
                 //increment the rundown pixel
                 run_down_index++;
             }else{
@@ -89,10 +91,10 @@ void loop{
                 //clear the graph
                 graph.clear();
                 //fill the graph from the bottom with color
-                graph.fill(blue, 0, graph_pixel_curr);
+                graph.fill(BLUE, 0, graph_pixel_curr);
                 graph.show();
                 //make the cyclo light up a bit
-                wake_up_cyclo(graph_pixel_curr);
+                //wake_up_cyclo(graph_pixel_curr);
                 //increment the curr pixal
                 graph_pixel_curr++;
                 //reset rundown pixel
@@ -102,17 +104,17 @@ void loop{
                     //setting bargraph values back to start so graph fills from bottom
                     graph_pixel_curr = 1;
                     //make sure it doesn't run the setup again
-                    set_up = false;
+                    start_up = false;
                     //start the warm up
                     warm_up = true;
                 }
             }
         }
         else if(warm_up){
-            fade_tube(1);
-            if(done){
+            //fade_tube(1);
+            //if(done){
                 warm_up = false;
-            }
+            //}
         }
 
 
@@ -126,8 +128,8 @@ void loop{
         start_up = true;
         graph_pixel_curr = 1;
         //clear function not workin in these cases
-        graph.fill(dark, 0, GRAPH_PIXEL);
-        cyclo.fill(dark, 0, CYCLO_PIXEL);
+        graph.fill(DARK, 0, GRAPH_PIXEL);
+        cyclo.fill(DARK, 0, CYCLO_PIXEL);
         graph.show();
         cyclo.show();
 
@@ -145,7 +147,7 @@ void wake_up_cyclo(int curr_pixel){
     cyclo.fill(cyclo.Color(i,0,0), 0, CYCLO_PIXEL);  
     cyclo.show();
     //fade_delay is set to 1 when active, 4 when in startup
-    delay(fade_delay+4);
+    delay(4);
   } 
   cyclo.fill(DARK, 0, CYCLO_PIXEL);  
   cyclo.show();
