@@ -32,15 +32,22 @@ Adafruit_NeoPixel cyclo(CYCLO_PIXEL, PIN_CYCLO, NEO_GRB + NEO_KHZ800);
 //bright is for not burning my eyes during testing
 //used to control the brightness of LEDs
 // 0 <= BRIGHT <= 255
-#define BRIGHT 255
+#define BRIGHT 50.0
 //colors used in the program and for testing
 uint32_t BLUE = graph.Color(0,0,BRIGHT);
 uint32_t RED = graph.Color(BRIGHT,0,0);
-//make it a percentage to correlate with variable BRIGHT
-uint32_t ORANGE = graph.Color(BRIGHT, int(BRIGHT*(165/255)), 0);
-uint32_t PURPLE = graph.Color(BRIGHT,0,int(BRIGHT*(150/255)));
 uint32_t GREEN = graph.Color(0,BRIGHT,0);
 uint32_t DARK = graph.Color(0,0,0);
+
+//make it a percentage to correlate with variable BRIGHT
+uint32_t ORANGE = graph.Color(BRIGHT, BRIGHT*(25.0/255.0), 0);
+uint32_t ORANGE_TWO = graph.Color(BRIGHT, BRIGHT*(45.0/255.0), 0);
+uint32_t PURPLE = graph.Color(BRIGHT,0,BRIGHT*(150.0/255.0));
+//pink BRIGHT, BRIGHT*(25.0/255.0), BRIGHT*(50.0/255.0)
+//light purple BRIGHT, BRIGHT*(25.0/255.0), BRIGHT*(200.0/255.0)
+//bright purple BRIGHT, BRIGHT*(5.0/255.0), BRIGHT*(200.0/255.0)
+//teal 0 ,BRIGHT*(150.0/255.0), BRIGHT*(200.0/255.0)
+//uint32_t PLAY = graph.Color(BRIGHT, BRIGHT*(45.0/255.0), 0);
 ////////////////////// ////////////////////// //////////////////////
 
 
@@ -56,7 +63,7 @@ int graph_pixel_curr = 1;
 ////////////////////// ////////////////////// //////////////////////  
 //it takes three seconds to start up the gun and fire
 ////////////////////// Gun Variables //////////////////////
-#define GUN_SWITCH_PIN 2
+#define GUN_SWITCH_PIN 1
 uint32_t currColor = RED;
 int CUR_GUN_STATE = 1;
 int gunSwitchWait = 150;
@@ -82,6 +89,13 @@ void loop() {
 
     Serial.print("\nThirdSwitch: ");
     Serial.print(thirdSwitchState);
+
+    Serial.print("\ngunButtonVal: ");
+    Serial.print(gunButtonVal);
+    Serial.print("\n\t");
+
+    //Serial.print(value);
+    //delay(1000);
 
     if(thirdSwitchState == LOW){
         Serial.print("\n\t\tThirdSwitch is LOW\n");
@@ -134,7 +148,7 @@ void loop() {
                 active = true;
             //}
         }
-
+        
         if(gunButtonVal == LOW){
           if(currGunTime - prevGunTime > gunSwitchWait){
             gun_state();
@@ -146,17 +160,25 @@ void loop() {
 
         if(active){
           //cyclotron is in an active state, make the thing spin
+          graph.fill(currColor, 0, GRAPH_PIXEL);
+          graph.show();
         }
-
+        
     }else{
         //button is high - turn the pack off
         Serial.print("\n\t\tThirdSwitch is HIGH\n");
         Serial.print("\n\t\tPack is OFF\n");
-        //reset warm up and start up sequences
+        //reset active, warm up and start up sequences
         active = false;
         warm_up = false;
         start_up = true;
+        //reset graph variables
         graph_pixel_curr = 1;
+        run_down_index = 0;
+        //reset gun logic
+        CUR_GUN_STATE = 1;
+        currColor = RED;
+
         //clear function not workin in these cases
         graph.fill(DARK, 0, GRAPH_PIXEL);
         cyclo.fill(DARK, 0, CYCLO_PIXEL);
@@ -195,7 +217,7 @@ void gun_state(){
       break;
     case 3:
       // firing
-      currColor = PURPLE;
+      currColor = ORANGE_TWO;
       break;
     default:
       //default would be red
