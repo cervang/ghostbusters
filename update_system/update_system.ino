@@ -37,21 +37,32 @@ Adafruit_NeoPixel cyclo(CYCLO_PIXEL, PIN_CYCLO, NEO_GRB + NEO_KHZ800);
 uint32_t BLUE = graph.Color(0,0,BRIGHT);
 uint32_t RED = graph.Color(BRIGHT,0,0);
 //make it a percentage to correlate with variable BRIGHT
-uint32_t ORANGE = graph.Color(BRIGHT*(255/255), BRIGHT*(165/255), 0);
+uint32_t ORANGE = graph.Color(BRIGHT, int(BRIGHT*(165/255)), 0);
+uint32_t PURPLE = graph.Color(BRIGHT,0,int(BRIGHT*(150/255)));
 uint32_t GREEN = graph.Color(0,BRIGHT,0);
 uint32_t DARK = graph.Color(0,0,0);
 ////////////////////// ////////////////////// //////////////////////
 
 
 ////////////////////// Main Loop Values //////////////////////
-int thirdSwitchState = 0;
+//int thirdSwitchState = 0;
 int start_up = true;
 int warm_up = false;
+int active = false;
 int START = 0;
 int run_down_index = 0;
 int graph_pixel_curr = 1;
+
 ////////////////////// ////////////////////// //////////////////////  
 //it takes three seconds to start up the gun and fire
+////////////////////// Gun Variables //////////////////////
+#define GUN_SWITCH_PIN 2
+uint32_t currColor = RED;
+int CUR_GUN_STATE = 1;
+int gunSwitchWait = 150;
+unsigned long currGunTime = millis(); 
+unsigned long prevGunTime = millis();
+////////////////////// ////////////////////// //////////////////////
 
 void setup() {
   // put your setup code here, to run once:
@@ -59,19 +70,23 @@ void setup() {
   graph.begin();
   cyclo.begin();
   pinMode(THIRD_SWITCH_PIN, INPUT_PULLUP);
+  pinMode(GUN_SWITCH_PIN, INPUT_PULLUP);
 
 }
 
 
 void loop() {
     //redesigning the system so start up sequence is more fluid
-    thirdSwitchState = digitalRead(THIRD_SWITCH_PIN);
+    int thirdSwitchState = digitalRead(THIRD_SWITCH_PIN);
+    int gunButtonVal = digitalRead(GUN_SWITCH_PIN);
+
     Serial.print("\nThirdSwitch: ");
     Serial.print(thirdSwitchState);
 
     if(thirdSwitchState == LOW){
         Serial.print("\n\t\tThirdSwitch is LOW\n");
         Serial.print("\n\t\tPack is ON\n");
+        currGunTime = millis();
         //this means the button is active - let the sequence run
 
         
@@ -110,20 +125,35 @@ void loop() {
                 }
             }
         }
-        else if(warm_up){
+        
+        if(warm_up){
+          //TODO: Adding warm up sequence
             //fade_tube(1);
             //if(done){
                 warm_up = false;
+                active = true;
             //}
         }
 
+        if(gunButtonVal == LOW){
+          if(currGunTime - prevGunTime > gunSwitchWait){
+            gun_state();
+            graph.fill(DARK, 0, GRAPH_PIXEL);
+            graph.show();
+            prevGunTime = currGunTime;
+          }
+        }
 
+        if(active){
+          //cyclotron is in an active state, make the thing spin
+        }
 
     }else{
         //button is high - turn the pack off
         Serial.print("\n\t\tThirdSwitch is HIGH\n");
         Serial.print("\n\t\tPack is OFF\n");
         //reset warm up and start up sequences
+        active = false;
         warm_up = false;
         start_up = true;
         graph_pixel_curr = 1;
@@ -136,6 +166,45 @@ void loop() {
 
     }
 
+}
+
+/**
+ *Returns an color to change the NEOPIXEL lights
+*/
+void gun_state(){
+  //uint32_t GunColor;
+  if(CUR_GUN_STATE > 3){
+    //reset to 0
+    CUR_GUN_STATE = 0;
+  }
+  switch (CUR_GUN_STATE) {
+    case 0:
+      // Orange would be the default
+      //this would be the default state
+      currColor = RED;
+      break;
+    case 1:
+      // slime
+      // return green
+      currColor = GREEN;
+      break;
+    case 2:
+      // ice
+      // return blue
+      currColor = BLUE;
+      break;
+    case 3:
+      // firing
+      currColor = PURPLE;
+      break;
+    default:
+      //default would be red
+      currColor = RED;
+      break;
+  }
+  //increment
+  CUR_GUN_STATE++;
+  
 }
 
 void wake_up_cyclo(int curr_pixel){
@@ -164,7 +233,7 @@ void fade_tube(int FADE_DELAY){
   for(int i = 0; i <= BRIGHT; i++){
     //cyclo.Color(255-i,0,0) -> Allows you to control the color brightness with forloop
     //cyclo.fill(color, starting index, number of LEDs to fill from starting index);     
-    cyclo.fill(cyclo.Color(BRIGHT-i,0,0), START, CYCLO_TUBE);  
+    cyclo.fill(currColor-i, START, CYCLO_TUBE);  
     cyclo.show();
     //fade_delay is set to 1 when active, 4 when in startup
     delay(FADE_DELAY);
