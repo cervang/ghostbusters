@@ -10,12 +10,12 @@
 //#define OUTPUT_SECOND_SWITCH 24
 #define THIRD_SWITCH_PIN 2 
 //pins we write to turn on the gun 
-#define OUTPUT_THIRD_SWITCH 3
-#define OUTPUT_THIRD_SWITCH_PIN_2 4
+#define OUTPUT_THIRD_SWITCH 4
+#define OUTPUT_THIRD_SWITCH_PIN_2 6
 
 //controls the state of the gun, allowing us to moniter change
 #define STATE_CHANGE_PIN 8
-#define OUTPUT_modePin 9
+#define OUTPUT_modePin 10
 
 //tells the second arduino to turn off the gun
 #define ON_PIN 12
@@ -99,7 +99,6 @@ void loop() {
     //digitalWrite(7, LOW);
     prevTime = currTime;
   }
-  
   /**
    * STATE_CHANGE shows the modes of the gun. 
    * TODO: Make a function to return the state of the gun
@@ -112,8 +111,7 @@ void loop() {
     digitalWrite(OUTPUT_modePin, HIGH);
     //digitalWrite(7, HIGH);
     //wait for a second for hasbro to acknowledge it
-    //take currentTime to compare for later
-    
+    //take currentTime to compare for later 
   }
       
 }
