@@ -9,14 +9,14 @@
 #define PIN_GRAPH 4
 #define PIN_CYCLO 6 
 //#define BLUE_THIRD_PIN_SWITCH 2
-#define THIRD_SWITCH_PIN 3
+#define THIRD_SWITCH_PIN 11
 //#define OUTPUT_THIRD_SWITCH 5
 //total LEDs in graph
-#define GRAPH_PIXEL 6
+#define GRAPH_PIXEL 15
 //total LEDs in cyclo
-#define CYCLO_PIXEL 16
+#define CYCLO_PIXEL 20
 //count of LEDs in each individual tube
-#define CYCLO_TUBE 4
+#define CYCLO_TUBE 5
 
 
 //graph LEDs
@@ -49,7 +49,7 @@ int buttonState = 0;
 int buttonState2 = 0;
 
 //used to keep track of event times- making sure they don't get stuck in a process
-unsigned long eventTime_1 = 100; //default graph wait time 125
+unsigned long eventTime_1 = 25; //default graph wait time 125
 unsigned long eventTime_2 = 200; //default cyclo wait time 200
 //also used to make sure time is divided between the two
 unsigned long currTime = millis();
@@ -94,7 +94,11 @@ void loop() {
           graph.fill(blue, 0, graph_pixel_curr);
           graph.show();
           //make the cyclo light up a bit
-          wake_up_cyclo(graph_pixel_curr);
+          cyclo.fill(dark, 0, CYCLO_PIXEL);
+          cyclo.show();
+          cyclo.fill(graph.Color( ( bright / ((GRAPH_PIXEL+1) - graph_pixel_curr)) , 0 , 0), 0, CYCLO_PIXEL);
+          cyclo.show();
+          //wake_up_cyclo(graph_pixel_curr);
           //increment the curr pixal
           graph_pixel_curr++;
           //reset rundown pixel
