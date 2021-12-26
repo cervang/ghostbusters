@@ -13,11 +13,16 @@
 Adafruit_NeoPixel graph(GRAPH_PIXEL, PIN_GRAPH, NEO_GRB + NEO_KHZ800);
 
 //pin associated with cyclo
-#define PIN_CYCLO 6 
+#define PIN_CYCLO 5 
 //total count of LEDs in cyclo
 #define CYCLO_PIXEL 16
 //count of LEDs in each individual tube
 #define CYCLO_TUBE 4
+unsigned int currCycloTime = millis();
+unsigned int prevCycloTime = millis();
+int cycloDelayValue = 1;
+int cyclo_start_index = 0; 
+int currBright = 0;
 //cyclo LEDs
 Adafruit_NeoPixel cyclo(CYCLO_PIXEL, PIN_CYCLO, NEO_GRB + NEO_KHZ800);
 ////////////////////// ////////////////////// ////////////////////// 
@@ -32,7 +37,7 @@ Adafruit_NeoPixel cyclo(CYCLO_PIXEL, PIN_CYCLO, NEO_GRB + NEO_KHZ800);
 //bright is for not burning my eyes during testing
 //used to control the brightness of LEDs
 // 0 <= BRIGHT <= 255
-#define BRIGHT 50.0
+#define BRIGHT 255.0
 //colors used in the program and for testing
 uint32_t BLUE = graph.Color(0,0,BRIGHT);
 uint32_t RED = graph.Color(BRIGHT,0,0);
@@ -63,7 +68,7 @@ int graph_pixel_curr = 1;
 ////////////////////// ////////////////////// //////////////////////  
 //it takes three seconds to start up the gun and fire
 ////////////////////// Gun Variables //////////////////////
-#define GUN_SWITCH_PIN 1
+#define GUN_SWITCH_PIN 6
 uint32_t currColor = RED;
 int CUR_GUN_STATE = 1;
 int gunSwitchWait = 150;
@@ -101,6 +106,7 @@ void loop() {
         Serial.print("\n\t\tThirdSwitch is LOW\n");
         Serial.print("\n\t\tPack is ON\n");
         currGunTime = millis();
+        currCycloTime = millis();
         //this means the button is active - let the sequence run
 
         
@@ -160,8 +166,21 @@ void loop() {
 
         if(active){
           //cyclotron is in an active state, make the thing spin
-          graph.fill(currColor, 0, GRAPH_PIXEL);
-          graph.show();
+          if(currCycloTime - prevCycloTime > cycloDelayValue){
+            if(cyclo_start_index >= CYCLO_PIXEL){
+              cyclo_start_index = 0;
+            }
+            if(currBright > BRIGHT){
+              currBright = 0;
+            }else{
+              currBright++;
+            }
+            cyclo.fill(currColor-currBright, cyclo_start_index, CYCLO_TUBE);  
+            cyclo.show();
+            prevCycloTime = currCycloTime;
+          }
+
+          
         }
         
     }else{
@@ -178,7 +197,9 @@ void loop() {
         //reset gun logic
         CUR_GUN_STATE = 1;
         currColor = RED;
-
+        //reset cyclo logic
+        currBright = 0;
+        cyclo_start_index = 0;
         //clear function not workin in these cases
         graph.fill(DARK, 0, GRAPH_PIXEL);
         cyclo.fill(DARK, 0, CYCLO_PIXEL);
