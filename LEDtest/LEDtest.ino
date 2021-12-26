@@ -22,6 +22,7 @@ unsigned long previousTime = millis();
 //true is increasing
 //false is decreasing
 bool increaseORdecrease = true;
+int i = 0;
 
 void setup() {
   // put your setup code here, to run once:
