@@ -16,7 +16,7 @@ uint32_t PURPLE = graph.Color(255,0,150.0);
 uint32_t RED = graph.Color(255,0,0);
 uint32_t DARK = graph.Color(0,0,0);
 
-unsigned long delayTime = 10;
+#define DELAYTIME 10
 unsigned long currentTime = millis();
 unsigned long previousTime = millis();
 //true is increasing
@@ -36,7 +36,7 @@ void setup() {
 void loop() {
   currentTime = millis();
 
-  if(previousTime - currentTime < delayTime){
+  if(previousTime - currentTime < DELAYTIME){
     //this means that enough time has passed for the lights to darken/lighten
     
     if(i > 255 && increaseORdecrease){
