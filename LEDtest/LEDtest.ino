@@ -54,6 +54,8 @@ void loop() {
     }else{
       i--;
     }
+    Serial.print(i);
+    Serial.print("\n");
     //fill the graph
     graph.fill(DARK, 0, GRAPH_PIXEL);
     graph.show();
