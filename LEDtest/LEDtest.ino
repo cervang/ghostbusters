@@ -16,7 +16,7 @@ uint32_t PURPLE = graph.Color(255,0,150.0);
 uint32_t RED = graph.Color(255,0,0);
 uint32_t DARK = graph.Color(0,0,0);
 
-#define DELAYTIME 10
+#define DELAYTIME 4
 unsigned long currentTime = millis();
 unsigned long previousTime = millis();
 //true is increasing
@@ -28,23 +28,25 @@ void setup() {
   // put your setup code here, to run once:
   graph.begin();
   graph.show();
-  Serial.begin(9600);
-  Serial.print(PURPLE);
-  Serial.print("\n");
+  //Serial.begin(9600);
+  //Serial.print("\n");
+  //Serial.print(PURPLE);
+  //Serial.print("\n");
 }
 
 void loop() {
   currentTime = millis();
 
-  if(previousTime - currentTime < DELAYTIME){
+  if(currentTime-previousTime > DELAYTIME){
+    Serial.print("\n");
     //this means that enough time has passed for the lights to darken/lighten
     
-    if(i > 255 && increaseORdecrease){
+    if(i == 255 && increaseORdecrease){
       //Start decrementing the i count
       increaseORdecrease = false;
     }
     
-    if(i < 0){
+    if(i == 0){
       //Start incrementing the i count
       increaseORdecrease = true;
     }
@@ -54,11 +56,9 @@ void loop() {
     }else{
       i--;
     }
-    Serial.print(i);
-    Serial.print("\n");
+
     //fill the graph
-    graph.fill(DARK, 0, GRAPH_PIXEL);
-    graph.show();
+    graph.clear();
     graph.fill(graph.Color(i,0, (i*(150.0/255.0))), 0, GRAPH_PIXEL);
     graph.show();
     previousTime = millis();  
